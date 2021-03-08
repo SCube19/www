@@ -1,0 +1,101 @@
+body {
+    padding: 0;
+    margin: 0;
+    font-size: 20px;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li:hover {
+    background-color: rgb(90, 14, 14);
+}
+
+.parent {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+
+.content-padder {
+    padding: 1.5%;
+}
+
+header {
+    grid-column: 1 / 6;
+    grid-row: 1 / 2;
+}
+
+header ul {
+    font-size: 100%;
+    grid-column: 1 / 6;
+    grid-row: 1 / 2;
+    height: 100%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: rgb(141, 35, 35);
+    border: 1px solid rgb(209, 0, 0);
+    height: 100%;
+}
+
+.left-side {
+    grid-column: 1 / 2;
+    grid-row: 2 / 8;
+    background-color: blueviolet;
+}
+
+main {
+    grid-column: 2 / 5;
+    grid-row: 2 / 5;
+    background-color: blue;
+}
+
+.right-side {
+    grid-column: 5 / 5;
+    grid-row: 2 / 5;
+    background-color: yellow;
+}
+
+.tabs {
+    grid-column: 2 / 6;
+    grid-row: 5 / 8;
+    background-color: green;
+}
+
+
+/* Style the tab */
+
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+
+/* Style the buttons that are used to open the tab content */
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    cursor: pointer;
+    padding: 14px 16px;
+}
+
+
+/* Change background color of buttons on hover */
+
+.tab button:hover {
+    background-color: #ddd;
+}
