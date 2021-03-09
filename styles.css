@@ -1,13 +1,14 @@
 :root {
     --menu1: #3c6677;
     --menuhover1: #648397;
-    --left1: #247e33;
-    --main1: #c04e2b;
-    --right1: #912d5b;
-    --tabbar1: #bebebe;
-    --tablinks1: #c95050;
-    --tabbarhover1: rgb(204, 107, 28);
-    --tabarea1: #291680;
+    --left1: #34b149;
+    --main1: #e06c48;
+    --right1: #ca347a;
+    --tabbar1: #acacac;
+    --tablinks1: #acacac;
+    --tabbarhover1: rgb(235, 235, 235);
+    --tabarea1: #4b3e83;
+    --activetab1: #41dfd1;
     --font1: #ffffff;
     --menu2: #ffffff;
     --menuhover2: #ffffff;
@@ -18,16 +19,19 @@
     --tablinks2: #bebebe;
     --tabbarhover2: #ddd;
     --tabarea2: #ffffff;
+    --activetab2: #41dfd1;
     --font2: #ffffff;
 }
 
 body {
     padding: 0;
     margin: 0;
+    font-family: 'Raleway', sans-serif;
 }
 
 li {
     display: inline-flex;
+    transition: cubic-bezier(0.075, 0.82, 0.165, 1) 1s;
 }
 
 li a {
@@ -38,6 +42,7 @@ li a {
 
 li:hover {
     background-color: var(--menuhover1);
+    transition: cubic-bezier(0.075, 0.82, 0.165, 1) 1s;
 }
 
 .parent {
@@ -48,7 +53,11 @@ li:hover {
 }
 
 .content-padder {
-    padding: 1.5%;
+    padding: 20px;
+}
+
+.border {
+    border-style: inset;
 }
 
 header {
@@ -77,19 +86,19 @@ header ul {
 
 main {
     grid-column: 2 / 5;
-    grid-row: 2 / 5;
+    grid-row: 2 / 6;
     background-color: var(--main1);
 }
 
 .right-side {
     grid-column: 5 / 5;
-    grid-row: 2 / 5;
+    grid-row: 2 / 6;
     background-color: var(--right1);
 }
 
 .tabs {
     grid-column: 2 / 6;
-    grid-row: 5 / 8;
+    grid-row: 6 / 8;
     background-color: var(--tabarea1);
 }
 
@@ -99,6 +108,11 @@ main {
 .tab {
     overflow: hidden;
     background-color: var(--tabbar1);
+    border-style: inset;
+}
+
+.tab button.active {
+    background-color: var(--activetab1);
 }
 
 
@@ -108,9 +122,10 @@ main {
     background-color: var(--tablinks1);
     float: left;
     cursor: pointer;
-    padding: 1% 1%;
-    transform: perspective(1em) rotateX(10deg);
-    margin-left: 3%;
+    font-size: 2em;
+    padding: 0 1% 0 1%;
+    transition: cubic-bezier(0.075, 0.82, 0.165, 1) 1s;
+    border: inset;
 }
 
 
@@ -118,4 +133,38 @@ main {
 
 .tab button:hover {
     background-color: var(--tabbarhover1);
+    transition: cubic-bezier(0.075, 0.82, 0.165, 1) 2s;
+}
+
+
+/* Mobile versions */
+
+@media only screen and (max-aspect-ratio: 4/3) {
+    .main {
+        grid-column: 2 / 6;
+        grid-row: 2 / 5;
+    }
+    .right-side {
+        grid-column: 2 / 6;
+        grid-row: 5 / 6;
+    }
+}
+
+@media only screen and (max-aspect-ratio: 3/4) {
+    .left-side {
+        grid-column: 1 / 6;
+        grid-row: 2 / 3;
+    }
+    .main {
+        grid-column: 1 / 6;
+        grid-row: 3 / 6;
+    }
+    .right-side {
+        grid-column: 1 / 6;
+        grid-row: 6 / 7;
+    }
+    .tabs {
+        grid-column: 1 / 6;
+        grid-row: 7 / 8;
+    }
 }
