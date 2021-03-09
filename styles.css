@@ -1,3 +1,26 @@
+:root {
+    --menu1: #3c6677;
+    --menuhover1: #648397;
+    --left1: #247e33;
+    --main1: #c04e2b;
+    --right1: #912d5b;
+    --tabbar1: #bebebe;
+    --tablinks1: #c95050;
+    --tabbarhover1: rgb(204, 107, 28);
+    --tabarea1: #291680;
+    --font1: #ffffff;
+    --menu2: #ffffff;
+    --menuhover2: #ffffff;
+    --left2: #ffffff;
+    --main2: #ffffff;
+    --right2: #ffffff;
+    --tabbar2: #ffffff;
+    --tablinks2: #bebebe;
+    --tabbarhover2: #ddd;
+    --tabarea2: #ffffff;
+    --font2: #ffffff;
+}
+
 body {
     padding: 0;
     margin: 0;
@@ -5,19 +28,16 @@ body {
 
 li {
     display: inline-flex;
-    flex: auto;
 }
 
 li a {
-    display: flex;
-    color: white;
-    text-align: center;
+    color: var(--font1);
     padding: 14px 16px;
     text-decoration: none;
 }
 
 li:hover {
-    background-color: rgb(90, 14, 14);
+    background-color: var(--menuhover1);
 }
 
 .parent {
@@ -34,39 +54,43 @@ li:hover {
 header {
     grid-column: 1 / 6;
     grid-row: 1 / 2;
-    background-color: rgb(141, 35, 35);
+    background-color: var(--menu1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 header ul {
-    font-size: 3em;
+    font-size: 4em;
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
+    text-align: center;
 }
 
 .left-side {
     grid-column: 1 / 2;
     grid-row: 2 / 8;
-    background-color: blueviolet;
+    background-color: var(--left1);
 }
 
 main {
     grid-column: 2 / 5;
     grid-row: 2 / 5;
-    background-color: blue;
+    background-color: var(--main1);
 }
 
 .right-side {
     grid-column: 5 / 5;
     grid-row: 2 / 5;
-    background-color: yellow;
+    background-color: var(--right1);
 }
 
 .tabs {
     grid-column: 2 / 6;
     grid-row: 5 / 8;
-    background-color: green;
+    background-color: var(--tabarea1);
 }
 
 
@@ -74,24 +98,24 @@ main {
 
 .tab {
     overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
+    background-color: var(--tabbar1);
 }
 
 
 /* Style the buttons that are used to open the tab content */
 
 .tab button {
-    background-color: inherit;
+    background-color: var(--tablinks1);
     float: left;
-    border: none;
     cursor: pointer;
-    padding: 14px 16px;
+    padding: 1% 1%;
+    transform: perspective(1em) rotateX(10deg);
+    margin-left: 3%;
 }
 
 
 /* Change background color of buttons on hover */
 
 .tab button:hover {
-    background-color: #ddd;
+    background-color: var(--tabbarhover1);
 }
