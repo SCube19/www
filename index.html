@@ -26,12 +26,94 @@
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorem deleniti voluptatibus exercitationem nisi eius? Possimus id placeat unde numquam maxime mollitia ex autem pariatur, quos necessitatibus voluptatum quisquam perspiciatis sit asperiores ullam
             quam laborum quidem magni ea doloribus facere sed sequi incidunt recusandae? Vitae asperiores deleniti, itaque earum nam reprehenderit?
         </div>
-        <div class="main content-padder border scroll">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam neque fugiat quo et expedita ratione officia modi est nulla doloribus omnis accusantium provident sequi adipisci debitis ipsum quibusdam obcaecati sint eaque odit eligendi, officiis optio
-            quas. Impedit sit odit libero quos suscipit, dicta vero repudiandae vitae necessitatibus cumque inventore odio sapiente praesentium quia voluptatibus temporibus iure vel veritatis tempora? Quibusdam ut quisquam repudiandae blanditiis cumque
-            mollitia enim debitis unde officia eum veritatis aut pariatur corrupti dolorem, dolore sint in vel maxime nisi veniam? Minima recusandae sequi porro earum ex culpa officiis facilis dolores nisi, quasi voluptatibus suscipit vero libero excepturi
-            animi, quos natus eaque voluptatum aperiam sit, unde doloribus velit. Sapiente quam ea incidunt ratione nihil quod nam, numquam distinctio cum tempora id illum molestiae, expedita quia neque! Quia autem quaerat perferendis nam delectus beatae.
-        </div>
+        <code class="main content-padder border scroll">
+            // C++ program to print DFS traversal from
+// a given vertex in a  given graph
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+ 
+// Graph class represents a directed graph
+// using adjacency list representation
+class Graph {
+    int V; // No. of vertices
+ 
+    // Pointer to an array containing
+    // adjacency lists
+    list&lt;int&gt;* adj;
+ 
+    // A recursive function used by DFS
+    void DFSUtil(int v, bool visited[]);
+ 
+public:
+    Graph(int V); // Constructor
+ 
+    // function to add an edge to graph
+    void addEdge(int v, int w);
+ 
+    // DFS traversal of the vertices
+    // reachable from v
+    void DFS(int v);
+};
+ 
+Graph::Graph(int V)
+{
+    this-&gt;V = V;
+    adj = new list&lt;int&gt;[V];
+}
+ 
+void Graph::addEdge(int v, int w)
+{
+    adj[v].push_back(w); // Add w to v’s list.
+}
+ 
+void Graph::DFSUtil(int v, bool visited[])
+{
+    // Mark the current node as visited and
+    // print it
+    visited[v] = true;
+    cout &lt;&lt; v &lt;&lt; " ";
+ 
+    // Recur for all the vertices adjacent
+    // to this vertex
+    list&lt;int&gt;::iterator i;
+    for (i = adj[v].begin(); i != adj[v].end(); ++i)
+        if (!visited[*i])
+            DFSUtil(*i, visited);
+}
+ 
+// DFS traversal of the vertices reachable from v.
+// It uses recursive DFSUtil()
+void Graph::DFS(int v)
+{
+    // Mark all the vertices as not visited
+    bool* visited = new bool[V];
+    for (int i = 0; i &lt; V; i++)
+        visited[i] = false;
+ 
+    // Call the recursive helper function
+    // to print DFS traversal
+    DFSUtil(v, visited);
+}
+ 
+// Driver code
+int main()
+{
+    // Create a graph given in the above diagram
+    Graph g(4);
+    g.addEdge(0, 1);
+    g.addEdge(0, 2);
+    g.addEdge(1, 2);
+    g.addEdge(2, 0);
+    g.addEdge(2, 3);
+    g.addEdge(3, 3);
+ 
+    cout &lt;&lt; "Following is Depth First Traversal"
+            " (starting from vertex 2) \n";
+    g.DFS(2);
+ 
+    return 0;
+}
+        </code>
         <div class="right-side content-padder border scroll">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga sit magnam maxime nostrum qui debitis quas quia iste cumque deserunt? Excepturi, iusto tempore sed culpa eveniet sunt nesciunt maxime ipsa quidem non alias officiis placeat earum quae
             ducimus, quo ea accusantium! Rem doloribus debitis minima voluptates minus necessitatibus dolor repellat!</div>
         <div class="tabs border scroll">
