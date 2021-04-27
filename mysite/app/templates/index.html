@@ -1,0 +1,75 @@
+{% extends "base.html" %} {% block mainpage %}
+<div class="parent">
+    <header>
+        <ul>
+            <li><a href="/addFile">ADD-FILE</a></li>
+            <li><a href="/addDirectory">ADD-DIRECTORY</a></li>
+            <li><a href="/delete">DELETE-FILE</a></li>
+            <li><a href="/index">RUN</a></li>
+        </ul>
+    </header>
+
+    <div class="left-side border scroll">
+        <ul>
+            {% for directory in directories %}
+            <li>
+                <a class="dir" href="/index/0">
+                    <div class="leftalign">
+                        {% with ''|center:directory.0.2 as range %} {% for _ in range %} &ensp; {% endfor %} {% endwith %} | {{directory.0.1}}/
+                    </div>
+                </a>
+            </li>
+            {% for file in directory.1 %}
+            <li>
+                <a class="file" href="/showFile/{{file.0}}">
+                    <div class="leftalign">
+                        {% with ''|center:directory.0.2 as range %} {% for _ in range %} &ensp; {% endfor %} {% endwith %} &ensp; | {{file.1}}
+                    </div>
+                </a>
+            </li>
+            {% endfor %} {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Głupotka więc stylizowanie po części w htmlu -->
+    {% if code == None %}
+    <code class="main content-padder border scroll" style="background: var(--mainempty); position: relative;">
+    <div class="centerAbsolute">
+        <img src="/static/pepe.png" style="max-width: 100%; max-height: 100%;"/>
+        <p style="text-align: center; font-size: 2em;">HOPE YOUR CODE WORKS BUDDY</p>
+    </div>    
+    </code> {% else %}
+    <code class="main content-padder border scroll">{% for line in code %}<span style="background:var(--linenum)">{{line.1}}  </span>  {{line.0}}{% endfor %}</code> {% endif %}
+
+
+    <div class="right-side content-padder border scroll">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga sit magnam maxime nostrum qui debitis quas quia iste cumque deserunt? Excepturi, iusto tempore sed culpa eveniet sunt nesciunt maxime ipsa quidem non alias officiis placeat earum quae ducimus,
+        quo ea accusantium! Rem doloribus debitis minima voluptates minus necessitatibus dolor repellat!</div>
+
+
+    <div class="tabs border scroll">
+        <div class="tabbar">
+            <form action="/changeTab/0">
+                <button {% if active.0 %}class="active" {% endif %}>PROVERS</button>
+            </form>
+            <form action="/changeTab/1">
+                <button {% if active.1 %}class="active" {% endif %}>VCs</button>
+            </form>
+            <form action="/changeTab/2">
+                <button {% if active.2 %}class="active" {% endif %}>RESULT</button>
+            </form>
+        </div>
+        <div class="content-padder" {% if not active.0 %} style="display: none;" {% endif %}>
+            <h1>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consequatur at fuga recusandae in optio nobis similique eaque sequi quis hic.
+            </h1>
+        </div>
+        <div class="content-padder" {% if not active.1 %} style="display: none;" {% endif %}>
+            <h1>VCSy ahflahfsai fjknfiojf kmscniopwfwnfdhi
+            </h1>
+        </div>
+        <div class="content-padder" {% if not active.2 %} style="display: none;" {% endif %}>
+            <h1>result afjoiauf9e0h90fsjfoidj jf9whjfnsshuifwui w9fh uishf spfihfiuownifu awjqfi f
+            </h1>
+        </div>
+    </div>
+</div>
+{% endblock mainpage %}

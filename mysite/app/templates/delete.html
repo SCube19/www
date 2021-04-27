@@ -1,0 +1,37 @@
+{% extends "base.html" %} {% block mainpage %}
+
+<body class="deleterGradient" style="overflow-y: auto;">
+    <div class="deleterCenter" style="text-align: left;">
+        <h1 style="text-align: center; color:white;">CHOOSE DIRECTORY/FILE TO DELETE</h1>
+        <div>
+            <ul class="deleter">
+                {% for directory in directories %}
+                <li>
+                    <a class="dir dela" href="/deleteDirectory/{{directory.0.0}}">
+                        <div class="leftalign">
+                            <div class="unhider">
+                                {% with ''|center:directory.0.2 as range %} {% for _ in range %} &ensp; {% endfor %} {% endwith %}| {{directory.0.1}}/
+                            </div>
+                            <div class="hide" style="float:right;">&emsp;&lt;--------</div>
+                        </div>
+                    </a>
+
+                </li>
+                {% for file in directory.1 %}
+                <li>
+                    <a class="file dela" href="/deleteFile/{{file.0}}">
+                        <div class="leftalign">
+                            <div class="unhider">
+                                {% with ''|center:directory.0.2 as range %} {% for _ in range %} &ensp; {% endfor %}{% endwith %} &ensp; | {{file.1}}
+                            </div>
+                            <div class="hide">&emsp;&lt;--------</div>
+                        </div>
+
+                    </a>
+                </li>
+                {% endfor %} {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+{% endblock mainpage %}
