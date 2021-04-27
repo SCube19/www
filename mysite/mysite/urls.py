@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from app.views import indexView, indexView, addFileView, addDirectoryView, deleteView, deleteDirectory, deleteFile, changeTab, showFile
+from app.views import indexView, indexView, addFileView, addDirectoryView, deleteView, deleteDirectory, deleteFile, changeTab, showFile, resetFile, runFrama, chooseProver, setFlags
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,5 +27,9 @@ urlpatterns = [
     path('delete/', deleteView),
     path('deleteDirectory/<int:id>', deleteDirectory),
     path('deleteFile/<int:id>', deleteFile),
-    path('changeTab/<int:tabNum>', changeTab)
+    path('changeTab/<int:tabNum>', changeTab),
+    path('resetFile/', resetFile),
+    path('runFrama/<int:fileId>', runFrama),
+    path('chooseProver/', chooseProver),
+    path('setFlags/', setFlags)
 ]
