@@ -19,6 +19,9 @@
     --file: rgb(255, 51, 0);
     --delhover: #ffff;
     --linenum: #ffff;
+    --provers: #ffff;
+    --proverssubmit: #ffff;
+    --proverhover: #ffff;
 }
 
 :root {
@@ -40,6 +43,9 @@
     --file: rgb(255, 255, 255);
     --delhover: rgb(247, 32, 3);
     --linenum: #e0484d;
+    --provers: #6d3e83;
+    --proverssubmit: #863ca8;
+    --proverhover: rgb(163, 67, 147);
 }
 
 body {
@@ -296,4 +302,120 @@ li a {
     left: 50%;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+}
+
+.provers {
+    background-color: var(--provers);
+    width: 75%;
+    color: var(--font);
+    font-size: 2.5em;
+    border-style: none;
+}
+
+input.provers {
+    background-color: var(--proverssubmit);
+    color: var(--font);
+    font-size: 1.5em;
+    width: 75%;
+    border-style: solid;
+    border-color: var(--provers);
+    border-width: 5px;
+    border-radius: 0 0 50px 50px;
+    transition: background-color cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s;
+}
+
+input.provers:hover {
+    background-color: var(--proverhover);
+    transition: background-color cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s;
+    cursor: pointer;
+}
+
+
+/* SWITCH SECTION */
+
+
+/* The switch - the box around the slider */
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 100px;
+    border-radius: 5px;
+}
+
+
+/* Hide default HTML checkbox */
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+
+/* The slider */
+
+.slider {
+    border-radius: 5px;
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--tabbar);
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    border-radius: 5px;
+    position: absolute;
+    content: "";
+    height: 65%;
+    width: 26px;
+    left: 10px;
+    bottom: 18%;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: var(--proverhover);
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px var(--proverhover);
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(54px);
+    -ms-transform: translateX(54px);
+    transform: translateX(54px);
+}
+
+input[type=text].flags {
+    border-radius: 5px;
+    font-size: 1.03em;
+}
+
+input[type=text].flags:focus {
+    width: 70%;
+}
+
+input[type=submit].flags {
+    background-color: var(--proverssubmit);
+    border: none;
+    color: white;
+    padding: 10px 32px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition: background-color cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s;
+}
+
+input[type=submit].flags:hover {
+    transition: background-color cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s;
+    background-color: var(--proverhover)
 }

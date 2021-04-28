@@ -1,5 +1,6 @@
 from .models import User, File, FileSection, Directory, SectionCategory, Status, StatusData
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -46,3 +47,9 @@ def setUnavailable(directory):
         returnFiles += recFiles
 
     return returnDirs, returnFiles
+
+
+def getResult(filePath):
+    resultPath = filePath[:filePath.rfind('/')] + '/result.txt'
+    os.system(f'frama-c -wp -wp-log="r:{resultPath}" {filePath}') 
+    return os.popen(f'cat {resultPath}').read()

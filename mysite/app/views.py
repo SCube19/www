@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from .models import User, File, FileSection, Directory, SectionCategory, Status, StatusData
 from .forms import DirectoryForm, FileForm, acceptedProvers, acceptedFlags
 from django.http import HttpResponse, HttpResponseRedirect
-from .helpers import makeDirectoryTree, setUnavailable
+from .helpers import makeDirectoryTree, setUnavailable, getResult
 
 import logging
 
@@ -14,12 +14,15 @@ logger.setLevel(logging.DEBUG)
 def indexView(req, refresh = 0):
     if req.session.get('enableRte') == None:
         req.session['enableRte'] = False
+    if req.session.get('flags') == None:
+        req.session['flags'] = ""
 
     #if someone changed database we should update display stucture to avoid unnecesary computation
     if refresh != 0 or req.session.get('directories') == None:
         directories = makeDirectoryTree()
         #[directory(pk, name, level), [files(pk, name)]] list
-        directories = [[directory, [(file.pk, file.name) for file in Directory.objects.get(pk = directory[0]).file.filter(available = True).order_by('name')]] for directory in directories]
+        directories = [[directory, [(file.pk, file.name) for file in Directory.objects.get(pk = directory[0]).file.filter(available = True).order_by('name')]]\
+             for directory in directories]
         req.session['directories'] = directories
         logger.warn(directories)
     else:
@@ -32,9 +35,12 @@ def indexView(req, refresh = 0):
         active[0] = True
     else:
         active[req.session.get('tabNum')] = True
+    
     #make context out of directories, opened file, active tabs
-    logger.warn(acceptedProvers)
-    context = {'directories' : directories, 'code': req.session.get('code'), 'active' : active, 'provers': acceptedProvers}
+    context = {'directories' : directories, 'code': req.session.get('code'), 'active'\
+         : active, 'provers': acceptedProvers, 'result': req.session.get('result'), \
+             'currProver': "Default" if req.session.get('prover') == None else req.session.get('prover'), 'rte': req.session['enableRte'],\
+             'currFlags': req.session['flags']}
     return render(req, "index.html", context)
 
 def showFile(req, id):
@@ -47,7 +53,7 @@ def showFile(req, id):
 
     #save it in session to avoid unnecesary computation
     req.session['code'] = code
-    req.session['codeiD'] = id
+    req.session['codeId'] = id
     #dont ask for refresh
     return HttpResponseRedirect('/index/0')
 
@@ -95,7 +101,7 @@ def deleteDirectory(req, id):
     File.objects.bulk_update(files, ['available'])
 
     #check if we deleted file stored in session
-    if req.session.get('codeid') != None and \
+    if req.session.get('codeId') != None and \
         File.objects.get(pk = req.session.get('codeId')) != None \
         and File.objects.get(pk = req.session.get('codeId')).available == False:
         req.session['codeId'] = None
@@ -109,7 +115,7 @@ def deleteFile(req, id):
     file.save()
 
     #check if we deleted file stored in session
-    if req.session.get('codeid') != None and \
+    if req.session.get('codeId') != None and \
         File.objects.get(pk = req.session.get('codeId')) != None \
         and File.objects.get(pk = req.session.get('codeId')).available == False:
         req.session['codeId'] = None
@@ -118,10 +124,17 @@ def deleteFile(req, id):
 
 def changeTab(req, tabNum):
     req.session['tabNum'] = tabNum
+    if tabNum == 2:
+        if req.session.get('codeId') != None:
+            req.session['result'] = getResult(File.objects.get(pk = req.session.get('codeId')).fileField.path)
+        else:
+            req.session['result'] = ""
+
     return HttpResponseRedirect('/index/0/')
 
 def resetFile(req):
     req.session['code'] = None
+    req.session['codeId'] = None
     return HttpResponseRedirect('/index/0/')
 
 def chooseProver(req):
@@ -141,13 +154,12 @@ def setFlags(req):
         flags = str(req.POST.get('flags')).split()
         for flag in flags:
             if flag not in acceptedFlags:
-                logger.warn("siiuurr")
                 return HttpResponseRedirect('/index/0')
 
         req.session['flags'] = req.POST.get('flags')
 
     return HttpResponseRedirect('/index/0')
 
-def runFrama(req, fileId, flags):
+def runFrama(req, fileId):
     pass
     

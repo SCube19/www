@@ -48,6 +48,7 @@
 
 
     <div class="tabs border scroll">
+
         <div class="tabbar">
             <form action="/changeTab/0">
                 <button {% if active.0 %}class="active" {% endif %}>PROVERS</button>
@@ -59,37 +60,47 @@
                 <button {% if active.2 %}class="active" {% endif %}>RESULT</button>
             </form>
         </div>
+
         <div class="content-padder" {% if not active.0 %} style="display: none;" {% endif %}>
-            <div>
-                CHOOSE PROVER
+            <div style="text-align: center;">
+                <p style="color:var(--font); margin: 0 0 1% 0">CHOOSE YOUR PROVER (currently: {{currProver}})</p>
                 <form action="/chooseProver/" name="CHOOSE PROVER" method="POST">{% csrf_token %}
-                    <select multiple name="chosenProver">
+                    <select class="provers" name="chosenProver">
                     {% for prover in provers %}
                     <option value={{prover}}>{{prover}}</option>
                     {% endfor %}
                 </select>
-                    <input type="submit" value="APPLY" />
+                    <div style="width: 100%;">
+                        <input class="provers" type="submit" value="APPLY" />
+                    </div>
                 </form>
             </div>
         </div>
 
         <div class="content-padder" {% if not active.1 %} style="display: none;" {% endif %}>
-            <div>
+            <div style="text-align: center;">
                 <form action="/setFlags/" name="VCs" method="POST">{% csrf_token %}
-                    <div>
-                        ENABLE WP-RTE
+                    <div style="margin-bottom: 1%;">
+                        <span style="color:var(--font); margin: 0 0 1% 0">ENABLE WP-RTE: </span>
                         <label class="switch">
-                            <input type="checkbox" name="enable">
-                            <span class="slider"></span>
-                        </label> WRITE FLAGS
-                        <input type="text" name="flags">
+                                <input type="checkbox" name="enable" {% if rte %} checked {% endif %}>
+                                <span class="slider"></span>
+                        </label>
                     </div>
-                    <input type="submit" value="APPLY">
+                    <div style="margin-bottom: 1%;">
+                        <span style="color:var(--font); margin: 0 0 1% 0">WRITE FLAGS: </span>
+                        <input class="flags" type="text" name="flags">
+                    </div>
+                    <div><span style="color:var(--font); margin: 0 0 1% 0">CURRENT FLAGS: {{currFlags}}</span></div>
+                    <div>
+                        <input class="flags" type="submit" value="APPLY">
+                    </div>
                 </form>
             </div>
         </div>
-        <div class="content-padder" {% if not active.2 %} style="display: none;" {% endif %}>
 
+        <div class="content-padder" {% if not active.2 %} style="display: none;" {% endif %}>
+            <span style="color: var(--font); white-space: pre-wrap;">{{result}}</span>
         </div>
     </div>
 </div>
