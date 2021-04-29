@@ -5,7 +5,7 @@
             <li><a href="/addFile">ADD-FILE</a></li>
             <li><a href="/addDirectory">ADD-DIRECTORY</a></li>
             <li><a href="/delete">DELETE-FILE</a></li>
-            <li><a href="/index">RUN</a></li>
+            <li><a href={% if codeId is None %} "/index/0" {% else %} "/runFrama/{{codeId}}" {% endif %}>RUN</a></li>
             <li><a href="/resetFile">RESET-FILE</a></li>
         </ul>
     </header>
@@ -43,8 +43,8 @@
     <code class="main content-padder border scroll">{% for line in code %}<span style="background:var(--linenum)">{{line.1}}  </span>  {{line.0}}{% endfor %}</code> {% endif %}
 
 
-    <div class="right-side content-padder border scroll">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga sit magnam maxime nostrum qui debitis quas quia iste cumque deserunt? Excepturi, iusto tempore sed culpa eveniet sunt nesciunt maxime ipsa quidem non alias officiis placeat earum quae ducimus,
-        quo ea accusantium! Rem doloribus debitis minima voluptates minus necessitatibus dolor repellat!</div>
+    <div class="right-side content-padder border scroll">{% if framaStringList != None %}------------------------------------------------------------<br>{% for section in framaStringList %}<abbr style="border-bottom: none; cursor: inherit;text-decoration: none;" title={{section.2}}><span style="background:{{section.1}};">{{section.0}}</span></abbr>------------------------------------------------------------<br>{%endfor%}{%endif%}
+    </div>
 
 
     <div class="tabs border scroll">

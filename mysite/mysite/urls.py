@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from app.views import indexView, indexView, addFileView, addDirectoryView, deleteView, deleteDirectory,\
-     deleteFile, changeTab, showFile, resetFile, runFrama, chooseProver, setFlags
+     deleteFile, changeTab, showFile, resetFile, runFramaAdv, chooseProver, setFlags
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,7 +30,7 @@ urlpatterns = [
     path('deleteFile/<int:id>', deleteFile),
     path('changeTab/<int:tabNum>', changeTab),
     path('resetFile/', resetFile),
-    path('runFrama/<int:fileId>', runFrama),
+    path('runFrama/<int:id>', runFramaAdv),
     path('chooseProver/', chooseProver),
     path('setFlags/', setFlags)
 ]

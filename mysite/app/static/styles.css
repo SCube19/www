@@ -157,6 +157,8 @@ li a {
 /* right-side section */
 
 .right-side {
+    font-size: 0.8em;
+    white-space: pre;
     grid-column: 5 / 5;
     grid-row: 2 / 6;
     background-color: var(--right)
