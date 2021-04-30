@@ -4,7 +4,7 @@
         <ul>
             <li><a href="/addFile">ADD-FILE</a></li>
             <li><a href="/addDirectory">ADD-DIRECTORY</a></li>
-            <li><a href="/delete">DELETE-FILE</a></li>
+            <li><a href="/delete">DELETE</a></li>
             <li><a href={% if codeId is None %} "/index/0" {% else %} "/runFrama/{{codeId}}" {% endif %}>RUN</a></li>
             <li><a href="/resetFile">RESET-FILE</a></li>
         </ul>
@@ -15,7 +15,7 @@
             {% for directory in directories %}
             <li>
                 <a class="dir" href="/index/0">
-                    <div class="leftalign">
+                    <div style="font-weight: bold;" class="leftalign">
                         {% with ''|center:directory.0.2 as range %} {% for _ in range %} &ensp; {% endfor %} {% endwith %} | {{directory.0.1}}/
                     </div>
                 </a>

@@ -4,14 +4,11 @@ from .forms import DirectoryForm, FileForm, acceptedProvers, acceptedFlags
 from django.http import HttpResponse, HttpResponseRedirect
 from .helpers import makeDirectoryTree, setUnavailable, getResult, frama, parseSections
 
-import logging
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-
 # Create your views here.
+
+#MAIN INDEX VIEW
 def indexView(req, refresh = 1):
+    #these cant be none 
     if req.session.get('enableRte') == None:
         req.session['enableRte'] = False
     if req.session.get('flags') == None:
@@ -24,8 +21,8 @@ def indexView(req, refresh = 1):
         directories = [[directory, [(file.pk, file.name) for file in Directory.objects.get(pk = directory[0]).file.filter(available = True).order_by('name')]]\
              for directory in directories]
         req.session['directories'] = directories
-        logger.warn(directories)
     else:
+        #else just get it from session
         directories = req.session.get('directories')
 
     #get active tab
@@ -36,33 +33,38 @@ def indexView(req, refresh = 1):
     else:
         active[req.session.get('tabNum')] = True
     
-    #make context out of directories, opened file, active tabs
+    #make context out of all needed data (mostly session data)
     context = {'directories' : directories, 'code': req.session.get('code'), 'active'\
          : active, 'provers': acceptedProvers, 'result': req.session.get('result'), \
              'currProver': "Default" if req.session.get('prover') == None else req.session.get('prover'), 'rte': req.session['enableRte'],\
              'currFlags': req.session['flags'], 'codeId' : req.session.get('codeId'), 'framaStringList' : req.session.get('framaStringList')}
     return render(req, "index.html", context)
 
+
+#SHOW FILE ACTION VIEW
 def showFile(req, id):
     #open file
     file = get_object_or_404(File, pk = id)
     with open(file.fileField.path, 'r') as openedFile:
         code = list(openedFile)
+
     #make [(line, lineNum)] array for display
     code = [(code[i], i + 1) for i in range(len(code))]
+    #run default frama-c and update status objects
     stats, statData, framaStringList = frama(File.objects.get(pk = id), '')
     Status.objects.bulk_update(stats, ['status', 'lastUpdated'])
     StatusData.objects.bulk_update(statData, ['statusData', 'lastUpdated'])
 
+    #save data in session to avoid computation
     req.session['framaStringList'] = framaStringList
-    #save it in session to avoid unnecesary computation
     req.session['code'] = code
     req.session['codeId'] = id
     #dont ask for refresh
     return HttpResponseRedirect('/index/0')
 
+#ADD FILE VIEW
 def addFileView(req):
-    #getting input from form POST
+    #getting input from POST
     form = FileForm(req.POST or None, req.FILES or None)
     form.fields["directory"].queryset = Directory.objects.filter(available = True)
     if form.is_valid():
@@ -75,6 +77,7 @@ def addFileView(req):
     context = {'form': form}
     return render(req, "addFile.html", context)  
 
+#ADD DIRECTORY VIEW
 def addDirectoryView(req):
     #getting input from form POST
     form = DirectoryForm(req.POST or None)
@@ -93,11 +96,13 @@ def addDirectoryView(req):
     context = {'form': form}
     return render(req, "addDirectory.html", context)   
 
+#DELETE VIEW
 def deleteView(req):
     #get dirs from session
     context = {'directories' : req.session.get('directories')}
     return render(req, "delete.html", context)
 
+#DELETE DIRECTORY ACTION VIEW
 def deleteDirectory(req, id):
     #set directories and files to unavailable
     directory = get_object_or_404(Directory, pk = id)
@@ -114,6 +119,7 @@ def deleteDirectory(req, id):
         return HttpResponseRedirect('/index/1')
     return HttpResponseRedirect('/index/1')
 
+#DELETE FILE ACTION VIEW
 def deleteFile(req, id):
     #set to unavailable
     file = get_object_or_404(File, pk = id)
@@ -128,6 +134,7 @@ def deleteFile(req, id):
         return HttpResponseRedirect('/index/1')
     return HttpResponseRedirect('/index/1')
 
+#CHANGE TAB ACTION VIEW
 def changeTab(req, tabNum):
     req.session['tabNum'] = tabNum
     if tabNum == 2:
@@ -138,12 +145,14 @@ def changeTab(req, tabNum):
 
     return HttpResponseRedirect('/index/0/')
 
+#RESET FILE ACTION VIEW
 def resetFile(req):
     req.session['code'] = None
     req.session['codeId'] = None
     req.session['framaStringList'] = None
     return HttpResponseRedirect('/index/0/')
 
+#CHOOSE PROVER ACTION VIEW
 def chooseProver(req):
     if req.method == 'POST':
         chosenProver = req.POST.get('chosenProver')
@@ -153,10 +162,12 @@ def chooseProver(req):
             req.session['prover'] = chosenProver
     return HttpResponseRedirect('/index/0/') 
 
+#SET FLAGS ACTION VIEW
 def setFlags(req):
     if req.method == 'POST':
         req.session['enableRte'] = (req.POST.get('enable') == 'on')
 
+        #accepted flags are stored as @flag and we check for either @flag or -@flag
         flags = str(req.POST.get('flags')).split()
         for flag in flags:
             if flag not in acceptedFlags and (len(flag) <= 1 or flag[0] != '-' or flag[1:] not in acceptedFlags):
@@ -166,7 +177,9 @@ def setFlags(req):
 
     return HttpResponseRedirect('/index/0')
 
+#RUN FRAMA ADVANCED ACTION VIEW
 def runFramaAdv(req, id):
+    #set all the flags
     try:
         flags = ''
         if req.session.get('prover') != None:
@@ -178,6 +191,7 @@ def runFramaAdv(req, id):
     except:
         return HttpResponseRedirect('/index/0')
 
+    #run frama with those flags and update new status data
     stats, statData, framaStringList = frama(File.objects.get(pk = id), flags)
     Status.objects.bulk_update(stats, ['status', 'lastUpdated'])
     StatusData.objects.bulk_update(statData, ['statusData', 'lastUpdated'])

@@ -13,7 +13,7 @@ class User(models.Model):
     
 
 class Directory(models.Model):
-    name = models.CharField(max_length = 50)
+    name = models.CharField(unique = True, max_length = 50)
     description = models.CharField(max_length = 1000, blank = True)
     creationDate = models.DateTimeField(auto_now = True)
     owner = models.ForeignKey(User, on_delete = models.CASCADE)
@@ -29,7 +29,7 @@ class Directory(models.Model):
     
 
 class File(models.Model):
-    name = models.CharField(max_length = 50)
+    name = models.CharField(unique = True, max_length = 50)
     description = models.CharField(max_length = 1000, blank = True)
     creationDate = models.DateTimeField(auto_now = True)
     owner = models.ForeignKey(User, on_delete = models.CASCADE)
@@ -64,8 +64,8 @@ class StatusData(models.Model):
 
     
 class FileSection(models.Model):
-    name = models.CharField(blank = True, max_length = 50)
-    description = models.CharField(max_length = 1000, blank = True)
+    name = models.CharField(blank = True, default = "", max_length = 50)
+    description = models.CharField(max_length = 1000, blank = True, default = "")
     creationDate = models.DateTimeField(auto_now = True)
     category = models.OneToOneField(SectionCategory, on_delete = models.CASCADE, null = True, blank = True)
     status = models.OneToOneField(Status, on_delete = models.CASCADE, null = True, blank = True)
