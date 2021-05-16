@@ -1,67 +1,42 @@
 {% extends "base.html" %} {% block mainpage %}
-<div class="parent">
+<div id="mainpage" class="parent">
     <header>
         <ul>
             <li><a href="/addFile">ADD-FILE</a></li>
             <li><a href="/addDirectory">ADD-DIRECTORY</a></li>
-            <li><a href="/delete">DELETE</a></li>
+            <li><span onclick="menuHandler('delete')">DELETE</a></li>
             <li><a href={% if codeId is None %} "/index/0" {% else %} "/runFrama/{{codeId}}" {% endif %}>RUN</a></li>
-            <li><a href="/resetFile">RESET-FILE</a></li>
+            <li><span onclick="codeHandler('pepe')">RESET-FILE</span></li>
+            <li><a href="/logout">LOGOUT</a></li>
         </ul>
     </header>
 
-    <div class="left-side border scroll">
-        <ul>
-            {% for directory in directories %}
-            <li>
-                <a class="dir" href="/index/0">
-                    <div style="font-weight: bold;" class="leftalign">
-                        {% with ''|center:directory.0.2 as range %} {% for _ in range %} &ensp; {% endfor %} {% endwith %} | {{directory.0.1}}/
-                    </div>
-                </a>
-            </li>
-            {% for file in directory.1 %}
-            <li>
-                <a class="file" href="/showFile/{{file.0}}">
-                    <div class="leftalign">
-                        {% with ''|center:directory.0.2 as range %} {% for _ in range %} &ensp; {% endfor %} {% endwith %} &ensp; | {{file.1}}
-                    </div>
-                </a>
-            </li>
-            {% endfor %} {% endfor %}
-        </ul>
+    <div id="files" class="left-side border scroll">
     </div>
 
     <!-- Głupotka więc stylizowanie po części w htmlu -->
-    {% if code == None %}
-    <code class="main content-padder border scroll" style="background: var(--mainempty); position: relative;">
+    <code id="pepe" class="main content-padder border scroll" style="background: var(--mainempty); position: relative;">
     <div class="centerAbsolute">
         <img src="/static/pepe.png" style="max-width: 100%; max-height: 100%;"/>
-        <p style="text-align: center; font-size: 2em;">HOPE YOUR CODE WORKS BUDDY</p>
+        <p style="text-align: center; font-size: 2em;">I HOPE YOUR CODE WORKS BUDDY</p>
     </div>    
-    </code> {% else %}
-    <code class="main content-padder border scroll">{% for line in code %}<span style="background:var(--linenum)">{{line.1}}  </span>  {{line.0}}{% endfor %}</code> {% endif %}
+    </code>
+    <code id="code" class="main content-padder border scroll"></code>
 
 
-    <div class="right-side content-padder border scroll">{% if framaStringList != None %}------------------------------------------------------------<br>{% for section in framaStringList %}<abbr style="border-bottom: none; cursor: inherit;text-decoration: none;" title={{section.2}}><span style="background:{{section.1}};">{{section.0}}</span></abbr>------------------------------------------------------------<br>{%endfor%}{%endif%}
+    <div id="frama" class="right-side content-padder border scroll">{% if framaStringList != None %}------------------------------------------------------------<br>{% for section in framaStringList %}<abbr style="border-bottom: none; cursor: inherit;text-decoration: none;" title={{section.2}}><span style="background:{{section.1}};">{{section.0}}</span></abbr>------------------------------------------------------------<br>{%endfor%}{%endif%}
     </div>
 
 
     <div class="tabs border scroll">
 
         <div class="tabbar">
-            <form action="/changeTab/0">
-                <button {% if active.0 %}class="active" {% endif %}>PROVERS</button>
-            </form>
-            <form action="/changeTab/1">
-                <button {% if active.1 %}class="active" {% endif %}>VCs</button>
-            </form>
-            <form action="/changeTab/2">
-                <button {% if active.2 %}class="active" {% endif %}>RESULT</button>
-            </form>
+            <button id="PROVERS" class="active" onclick="tabsHandler('PROVERS','proversContent');">PROVERS</button>
+            <button id="VCs" onclick="tabsHandler('VCs', 'vcsContent');">VCs</button>
+            <button id="RESULT" onclick="tabsHandler('RESULT', 'resultContent', '{{codeId}}');">RESULT</button>
         </div>
 
-        <div class="content-padder" {% if not active.0 %} style="display: none;" {% endif %}>
+        <div id="proversContent" class="content-padder">
             <div style="text-align: center;">
                 <p style="color:var(--font); margin: 0 0 1% 0">CHOOSE YOUR PROVER (currently: {{currProver}})</p>
                 <form action="/chooseProver/" name="CHOOSE PROVER" method="POST">{% csrf_token %}
@@ -77,7 +52,7 @@
             </div>
         </div>
 
-        <div class="content-padder" {% if not active.1 %} style="display: none;" {% endif %}>
+        <div id="vcsContent" style="display: none;" class="content-padder">
             <div style="text-align: center;">
                 <form action="/setFlags/" name="VCs" method="POST">{% csrf_token %}
                     <div style="margin-bottom: 1%;">
@@ -99,9 +74,19 @@
             </div>
         </div>
 
-        <div class="content-padder" {% if not active.2 %} style="display: none;" {% endif %}>
-            <span style="color: var(--font); white-space: pre-wrap;">{{result}}</span>
+        <div id="resultContent" style="display: none;" class="content-padder">
+            {% load static %}
+            <img id="loading" style="max-width: 5%;" src="{% static 'load.gif' %}">
+            <span id="actualResultContent" style="color: var(--font); white-space: pre-wrap;"></span>
         </div>
     </div>
 </div>
+
+<div style="display: none;" id="delfile">
+    {% include 'delete.html' %}
+</div>
+
+<script type="text/javascript">
+    fileHandler('main');
+</script>
 {% endblock mainpage %}

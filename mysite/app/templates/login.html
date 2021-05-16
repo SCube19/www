@@ -1,0 +1,14 @@
+{% extends "base.html" %} {% block mainpage %}
+
+<body class="fillGradient" style="color:wheat;">
+    <div class="center">
+        <div>
+            <h1>LOGIN</h1>
+            <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %} {{form.as_p}}
+                <input type="submit" value="LOGIN" />
+            </form>
+        </div>
+    </div>>
+</body>
+
+{% endblock mainpage %}

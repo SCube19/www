@@ -1,6 +1,7 @@
 from .models import User, File, FileSection, Directory, SectionCategory, Status, StatusData
 import logging
 import os
+from django.http import HttpResponseRedirect
 
 #coloring of sections later change to css variables
 statusColorConv = {
@@ -20,8 +21,8 @@ def nextLevel(parent, returnDirs):
 
 
 #finds level 0 directories and then recursively makes list out of their children to make file tree structure
-def makeDirectoryTree():
-    directories = Directory.objects.filter(available = True).order_by('name')
+def makeDirectoryTree(userName):
+    directories = Directory.objects.filter(available = True, owner__login = userName).order_by('name')
 
     #find 0 level directories
     zeroDirs = []
@@ -126,7 +127,7 @@ def parseSections(file):
             continue
 
         makeSectionRelatives(bulks, content[lineNum].split(), file.owner)
-        fileSection = FileSection(name = '', description = '', statusData = statData, fileKey = file, sectionBegin = lineNum, sectionEnd = lineNum)
+        fileSection = FileSection(name = '', description = '', fileKey = file, sectionBegin = lineNum, sectionEnd = lineNum)
         bulks[0].append(fileSection)
 
     #save data (unoptimal later change to bulk_create with custom pk)
@@ -210,3 +211,9 @@ def frama(file, flags):
             stringStructure.append([out, statusColorConv.get(status), f'line {lineNum + 1}'])
 
     return returnStats, returnStatData, stringStructure
+
+
+#ASSIGMENT 3 ===========================================
+def loggedCheck(req):
+    return req.session.get('loggedUser') == None
+        

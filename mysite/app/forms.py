@@ -1,3 +1,4 @@
+from django.forms import widgets
 from .models import User, File, FileSection, Directory, SectionCategory, Status, StatusData
 from django import forms
 
@@ -9,9 +10,15 @@ acceptedFlags = {'@lemma', '@requires', '@assigns', '@ensures', '@exits', '@asse
 class DirectoryForm(forms.ModelForm):
     class Meta:
         model = Directory
-        fields = ['name', 'description', 'parentDirectory', 'owner']
+        fields = ['name', 'description', 'parentDirectory']
 
 class FileForm(forms.ModelForm):
     class Meta:
         model = File
-        fields = ['name', 'description','fileField', 'directory', 'owner']
+        fields = ['name', 'description','fileField', 'directory']
+
+class LoginForm(forms.ModelForm):
+    password = forms.CharField(widget = forms.PasswordInput())
+    class Meta:
+        model = User
+        fields = ['login', 'password']

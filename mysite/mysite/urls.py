@@ -13,24 +13,27 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path
-from app.views import indexView, indexView, addFileView, addDirectoryView, deleteView, deleteDirectory,\
-     deleteFile, changeTab, showFile, resetFile, runFramaAdv, chooseProver, setFlags
+from app.views import indexView, indexView, addFileView, addDirectoryView, deleteDirectory,\
+     deleteFile, loginView, logout, resultAction, showFile, resetFile, runFramaAdv, chooseProver, setFlags, makeFiles
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('index/', indexView),
     path('index/<int:refresh>/', indexView),
-    path('showFile/<int:id>', showFile),
+    url('showFile/', showFile),
     path('addFile/', addFileView),
     path('addDirectory/', addDirectoryView),
-    path('delete/', deleteView),
-    path('deleteDirectory/<int:id>', deleteDirectory),
-    path('deleteFile/<int:id>', deleteFile),
-    path('changeTab/<int:tabNum>', changeTab),
+    url('deleteDirectory/', deleteDirectory),
+    url('deleteFile/', deleteFile),
     path('resetFile/', resetFile),
     path('runFrama/<int:id>', runFramaAdv),
     path('chooseProver/', chooseProver),
-    path('setFlags/', setFlags)
+    path('setFlags/', setFlags),
+    path('login/', loginView),
+    path('logout/', logout),
+    url('resultAction/', resultAction),
+    url('makeFiles/', makeFiles)
 ]
