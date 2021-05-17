@@ -11,9 +11,24 @@ let framaArr = null;
 function framaOutputHandler(event) {
     var id = event.target.id;
     id = id[0] == 'u' ? id.slice(8, id.length) : id.slice(6, id.length);
-    console.log(id);
-    document.getElementById('rolled' + id).style.display = document.getElementById('rolled' + id).style.display == 'none' ? '' : 'none';
-    document.getElementById('unrolled' + id).style.display = document.getElementById('unrolled' + id).style.display == 'none' ? '' : 'none';
+
+    //document.getElementById('rolled' + id).style.visibility = document.getElementById('rolled' + id).style.visibility == 'hidden' ? 'visible' : 'hidden';
+    //document.getElementById('unrolled' + id).style.visibility = document.getElementById('unrolled' + id).style.visibility == 'hidden' ? 'visible' : 'hidden';
+    unroller('rolled' + id);
+    unroller('unrolled' + id);
+}
+
+function unroller(id) {
+    var doc = document.getElementById(id);
+    if (doc.style.visibility == 'hidden') {
+        doc.style.visibility = 'visible';
+        doc.style.maxWidth = '1000px';
+        doc.style.maxHeight = '1000px';
+    } else {
+        doc.style.visibility = 'hidden';
+        doc.style.maxHeight = '0';
+        doc.style.maxWidth = '0';
+    }
 }
 
 function tabsHandler(tabId, toUnhide) {
@@ -28,6 +43,7 @@ function tabsHandler(tabId, toUnhide) {
     document.getElementById(toUnhide).style.display = "block";
     document.getElementById(tabId).className = "active";
 
+    console.log(fileId);
     if (tabId == "RESULT" && fileId != null) {
         document.getElementById("actualResultContent").innerHTML = ""
         document.getElementById("loading").style.display = "block";
@@ -40,6 +56,8 @@ function tabsHandler(tabId, toUnhide) {
                 document.getElementById("actualResultContent").innerHTML = data.result;
             }
         });
+    } else if (tabId == "RESULT") {
+        document.getElementById("actualResultContent").innerHTML = "NO FILE SELECTED";
     }
 }
 
@@ -50,7 +68,7 @@ function framaParser(data) {
         // wrap-content forces one line of code
         let i = 0;
         Array.from(data.framaStringList).forEach(section => {
-            frama += '<abbr style="border-bottom: none; cursor: pointer;text-decoration: none;" title="' + section[2] + '"><span id="rolled' + i + '" style="background:' + section[1] + ';">' + section[2] + '\n</span><span id="unrolled' + i + '" style="display: none; background:' + section[1] + ';">' + section[0] + '</span></abbr>------------------------------------------------------------<br>';
+            frama += '<abbr style="border-bottom: none; cursor: pointer;text-decoration: none;" title="' + section[2] + '"><span class="framaAnimation" id="rolled' + i + '" style="max-height:1000px;max-width:1000px;display:inline-block;visibility:visible;overflow:hidden;background:' + section[1] + ';">' + section[2] + '\n</span><span class="framaAnimation" id="unrolled' + i + '" style="display:inline-block;max-width:0;max-height:0;visibility:hidden;overflow:hidden;background:' + section[1] + ';">' + section[0] + '</span></abbr><span style="display:block;">------------------------------------------------------------</span>';
             i++;
         });
     }
@@ -140,7 +158,7 @@ function fileHandler(type) {
 function mainFiles(data) {
     var html = "<ul>";
     Array.from(data.directories).forEach(directory => {
-        html += '<li><a class="dir" href="/index/0"><div style="font-weight: bold;" class="leftalign">';
+        html += '<li><a class="dir"><div style="font-weight: bold;" class="leftalign">';
         for (var i = 0; i < directory[0][2]; i++)
             html += '&ensp;';
         html += ' | ' + directory[0][1] + '\\</div></a></li>';
@@ -159,7 +177,7 @@ function mainFiles(data) {
 function deleteFiles(data) {
     var html = "";
     Array.from(data.directories).forEach(directory => {
-        html += '<li><a id="deldir_' + directory[0][0] + '" class="dir dela"><div class="leftalign"><div class="unhider">';
+        html += '<li><a style="cursor:pointer;" id="deldir_' + directory[0][0] + '" class="dir dela"><div class="leftalign"><div class="unhider">';
         for (var i = 0; i < directory[0][2]; i++)
             html += '&ensp;';
         html += '| ' + directory[0][1] + '</div><div class="hide" style="float:right;">&emsp;&lt;--------</div></div></a></li>';

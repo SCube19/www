@@ -147,7 +147,6 @@ def parseSections(file):
 #runs frama and return status, statusData and stringStructure for display
 def frama(file, flags):
     #run frama with given flags
-    print(f'frama-c -wp -wp-print {flags} {file.fileField.path}')
     #frama uses it as delimeter to print sections
     framaDelimeter = "------------------------------------------------------------\n"
     framaOutput = os.popen(f'frama-c -wp -wp-print {flags} {file.fileField.path}').read().split(framaDelimeter)

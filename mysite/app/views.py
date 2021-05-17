@@ -4,12 +4,10 @@ from .models import User, File, Directory, Status, StatusData
 from .forms import DirectoryForm, FileForm, acceptedProvers, acceptedFlags, LoginForm
 from django.http import HttpResponseRedirect
 from .helpers import makeDirectoryTree, setUnavailable, getResult, frama, parseSections, loggedCheck
-
 # Create your views here.
 
 #MAIN INDEX VIEW
 def indexView(req):
-    #these cant be non
     if loggedCheck(req):
         return HttpResponseRedirect('/logout/')
   
@@ -86,23 +84,28 @@ def deleteDirectory(req):
     #set directories and files to unavailable
     directory = get_object_or_404(Directory, pk = req.GET.get('pk'))
     directories, files = setUnavailable(directory)
+
     #update them in database
     Directory.objects.bulk_update(directories, ['available'])
     File.objects.bulk_update(files, ['available'])
 
-    return JsonResponse({})
+    #for test purposes
+    directories = [[directory.name, directory.available] for directory in directories]
+    files = [[file.name, file.available] for file in files]
+    return JsonResponse({'directories': directories, 'files': files})
 
 #DELETE FILE ACTION VIEW
 def deleteFile(req):
     if loggedCheck(req):
         return HttpResponseRedirect('/logout/')
-        
+
     #set to unavailable
     file = get_object_or_404(File, pk = req.GET.get('pk'))
     file.available = False
     file.save()
 
-    return JsonResponse({})
+    #for test purposes
+    return JsonResponse({'file' : [file.name, file.available]})
 
 #RUN FRAMA ADVANCED ACTION VIEW
 def runFramaAdv(req):
@@ -141,12 +144,13 @@ def runFramaAdv(req):
 
 def loginView(req):
     username = req.POST.get('login')
-    password = req.POST.get('password')
+    if username != None:
+        username = username.strip()
+    passw = req.POST.get('password')
 
-    if username != None and password != None:
-        if User.objects.filter(login = username, password = password).count() == 1:
-            req.session['loggedUser'] = username
-            return HttpResponseRedirect('/index/')
+    if username != None and passw != None and User.objects.filter(login = username, password = passw).count() == 1:
+        req.session['loggedUser'] = username
+        return HttpResponseRedirect('/index/')
     else:
         form = LoginForm(req.POST or None)
         context = {'form' : form}
@@ -163,7 +167,7 @@ def resultAction(req):
     if loggedCheck(req):
         return HttpResponseRedirect('/logout/')
 
-    result = getResult(File.objects.get(pk = req.GET.get('pk')).fileField.path)
+    result = getResult(get_object_or_404(File, pk = req.GET.get('pk')).fileField.path)
     data = {'result' : result}
     return JsonResponse(data)
 

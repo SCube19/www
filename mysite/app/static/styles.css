@@ -395,3 +395,10 @@ input[type=submit].flags:hover {
     transition: background-color cubic-bezier(0.075, 0.82, 0.165, 1) .5s;
     background-color: var(--proverhover)
 }
+
+
+/* ASSIGMENT 3 */
+
+.framaAnimation {
+    transition: all 0.4s;
+}
