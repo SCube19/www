@@ -5,7 +5,7 @@
             <li><a href="/addFile">ADD-FILE</a></li>
             <li><a href="/addDirectory">ADD-DIRECTORY</a></li>
             <li><span onclick="menuHandler('delete')">DELETE</a></li>
-            <li><a href={% if codeId is None %} "/index/0" {% else %} "/runFrama/{{codeId}}" {% endif %}>RUN</a></li>
+            <li><span id="run" onclick="menuHandler('run')">RUN</span></li>
             <li><span onclick="codeHandler('pepe')">RESET-FILE</span></li>
             <li><a href="/logout">LOGOUT</a></li>
         </ul>
@@ -17,14 +17,14 @@
     <!-- Głupotka więc stylizowanie po części w htmlu -->
     <code id="pepe" class="main content-padder border scroll" style="background: var(--mainempty); position: relative;">
     <div class="centerAbsolute">
-        <img src="/static/pepe.png" style="max-width: 100%; max-height: 100%;"/>
+        <img id="pepeimg" src="/static/pepe.png" style="max-width: 100%; max-height: 100%;"/>
         <p style="text-align: center; font-size: 2em;">I HOPE YOUR CODE WORKS BUDDY</p>
     </div>    
     </code>
     <code id="code" class="main content-padder border scroll"></code>
 
 
-    <div id="frama" class="right-side content-padder border scroll">{% if framaStringList != None %}------------------------------------------------------------<br>{% for section in framaStringList %}<abbr style="border-bottom: none; cursor: inherit;text-decoration: none;" title={{section.2}}><span style="background:{{section.1}};">{{section.0}}</span></abbr>------------------------------------------------------------<br>{%endfor%}{%endif%}
+    <div id="frama" class="right-side content-padder border scroll">
     </div>
 
 
@@ -33,20 +33,22 @@
         <div class="tabbar">
             <button id="PROVERS" class="active" onclick="tabsHandler('PROVERS','proversContent');">PROVERS</button>
             <button id="VCs" onclick="tabsHandler('VCs', 'vcsContent');">VCs</button>
-            <button id="RESULT" onclick="tabsHandler('RESULT', 'resultContent', '{{codeId}}');">RESULT</button>
+            <button id="RESULT" onclick="tabsHandler('RESULT', 'resultContent');">RESULT</button>
         </div>
 
         <div id="proversContent" class="content-padder">
             <div style="text-align: center;">
-                <p style="color:var(--font); margin: 0 0 1% 0">CHOOSE YOUR PROVER (currently: {{currProver}})</p>
-                <form action="/chooseProver/" name="CHOOSE PROVER" method="POST">{% csrf_token %}
-                    <select class="provers" name="chosenProver">
+                <p style="color:var(--font); margin: 0 0 1% 0">CHOOSE YOUR PROVER (currently:
+                    <span id="currProver">Default</span>)
+                </p>
+                <form name="CHOOSE PROVER" method="POST">{% csrf_token %}
+                    <select id="chosenProver" class="provers" name="chosenProver">
                     {% for prover in provers %}
                     <option value={{prover}}>{{prover}}</option>
                     {% endfor %}
                 </select>
                     <div style="width: 100%;">
-                        <input class="provers" type="submit" value="APPLY" />
+                        <input class="provers" onclick="flagHandler()" type="button" value="APPLY" />
                     </div>
                 </form>
             </div>
@@ -54,21 +56,22 @@
 
         <div id="vcsContent" style="display: none;" class="content-padder">
             <div style="text-align: center;">
-                <form action="/setFlags/" name="VCs" method="POST">{% csrf_token %}
+                <form name="VCs" method="POST">{% csrf_token %}
                     <div style="margin-bottom: 1%;">
                         <span style="color:var(--font); margin: 0 0 1% 0">ENABLE WP-RTE: </span>
                         <label class="switch">
-                                <input type="checkbox" name="enable" {% if rte %} checked {% endif %}>
+                                <input id="enableRte" type="checkbox" name="enable">
                                 <span class="slider"></span>
                         </label>
                     </div>
                     <div style="margin-bottom: 1%;">
                         <span style="color:var(--font); margin: 0 0 1% 0">WRITE FLAGS: </span>
-                        <input class="flags" type="text" name="flags">
+                        <input id="flgs" class="flags" type="text" name="flags">
                     </div>
-                    <div><span style="color:var(--font); margin: 0 0 1% 0">CURRENT FLAGS: {{currFlags}}</span></div>
+                    <div><span style="color:var(--font); margin: 0 0 1% 0">CURRENT FLAGS: <span id="currFlags"></span></span>
+                    </div>
                     <div>
-                        <input class="flags" type="submit" value="APPLY">
+                        <input class="flags" onclick="flagHandler()" type="button" value="APPLY">
                     </div>
                 </form>
             </div>

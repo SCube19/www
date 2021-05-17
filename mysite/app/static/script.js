@@ -1,12 +1,22 @@
 const existingTabs = new Set(["PROVERS", "VCs", "RESULT"])
 const existingTabContent = new Set(["proversContent", "vcsContent", "resultContent"])
 
-function framaOutputHandler(id) {
-    var element = document.getElementById(id)
+let prover = "Default";
+let enableRte = 'off';
+let VCs = "";
+let fileId = null;
 
+let framaArr = null;
+
+function framaOutputHandler(event) {
+    var id = event.target.id;
+    id = id[0] == 'u' ? id.slice(8, id.length) : id.slice(6, id.length);
+    console.log(id);
+    document.getElementById('rolled' + id).style.display = document.getElementById('rolled' + id).style.display == 'none' ? '' : 'none';
+    document.getElementById('unrolled' + id).style.display = document.getElementById('unrolled' + id).style.display == 'none' ? '' : 'none';
 }
 
-function tabsHandler(tabId, toUnhide, codeId = 0) {
+function tabsHandler(tabId, toUnhide) {
     existingTabContent.forEach(element => {
         document.getElementById(element).style.display = "none";
     });
@@ -18,12 +28,12 @@ function tabsHandler(tabId, toUnhide, codeId = 0) {
     document.getElementById(toUnhide).style.display = "block";
     document.getElementById(tabId).className = "active";
 
-    if (tabId == "RESULT" && codeId != "None") {
+    if (tabId == "RESULT" && fileId != null) {
         document.getElementById("actualResultContent").innerHTML = ""
         document.getElementById("loading").style.display = "block";
         $.ajax({
             url: "/resultAction/",
-            data: { pk: codeId },
+            data: { pk: fileId },
             dataType: "json",
             success: function(data) {
                 document.getElementById("loading").style.display = "none";
@@ -33,22 +43,49 @@ function tabsHandler(tabId, toUnhide, codeId = 0) {
     }
 }
 
+function framaParser(data) {
+    var frama = "";
+    if (data.framaStringList != null) {
+        frama += '------------------------------------------------------------<br>';
+        // wrap-content forces one line of code
+        let i = 0;
+        Array.from(data.framaStringList).forEach(section => {
+            frama += '<abbr style="border-bottom: none; cursor: pointer;text-decoration: none;" title="' + section[2] + '"><span id="rolled' + i + '" style="background:' + section[1] + ';">' + section[2] + '\n</span><span id="unrolled' + i + '" style="display: none; background:' + section[1] + ';">' + section[0] + '</span></abbr>------------------------------------------------------------<br>';
+            i++;
+        });
+    }
+    document.getElementById("frama").innerHTML = frama;
+
+    var arr = Array.from(data.framaStringList);
+    framaArr = Array.from(Array(arr.length).keys());
+    for (var i = 0; i < arr.length; i++) {
+        document.getElementById('rolled' + i).addEventListener('click', framaOutputHandler, false);
+        document.getElementById('unrolled' + i).addEventListener('click', framaOutputHandler, false);
+    }
+}
+
 function codeHandler(codeId) {
-    if (codeId == "pepe") {
-        document.getElementById("code").innerHTML = "";
-        document.getElementById("pepe").style.display = "block"
-    } else {
+    document.getElementById("code").innerHTML = "";
+    document.getElementById("pepeimg").src = "/static/pepe.png";
+    document.getElementById("pepe").style.display = "block";
+    document.getElementById("frama").innerHTML = "";
+    fileId = null;
+
+    if (codeId != 'pepe') {
+        document.getElementById("pepeimg").src = "/static/load.gif";
         $.ajax({
             url: "/showFile/",
             data: { pk: codeId },
             dataType: "json",
             success: function(data) {
-                document.getElementById("pepe").style.display = "none";
                 var code = "";
                 Array.from(data.code).forEach(line => {
                     code += '<span style="background:var(--linenum)">' + line[1] + '  </span>  ' + line[0];
                 });
+                document.getElementById("pepe").style.display = "none";
                 document.getElementById("code").innerHTML = code;
+                framaParser(data);
+                fileId = codeId;
             }
         });
     }
@@ -61,6 +98,18 @@ function menuHandler(navName) {
             document.getElementById("delfile").style.display = "block";
             break;
         case "run":
+            if (fileId != null) {
+                document.getElementById("run").style.background = 'green';
+                $.ajax({
+                    url: "/runFrama/",
+                    data: { 'pk': fileId, 'prover': prover, 'flags': VCs, 'enableRte': enableRte },
+                    dataType: "json",
+                    success: function(data) {
+                        framaParser(data);
+                        document.getElementById("run").style.background = '';
+                    }
+                });
+            }
             break;
         default:
             break;
@@ -137,4 +186,13 @@ function deleteHandler(id, type) {
             document.getElementById("delfile").style.display = "none";
         }
     });
+}
+
+function flagHandler() {
+    prover = document.getElementById('chosenProver').value;
+    enableRte = document.getElementById('enableRte').checked;
+    VCs = document.getElementById('flgs').value;
+    document.getElementById('currProver').innerHTML = prover;
+    document.getElementById('currFlags').innerHTML = VCs;
+    document.getElementById('enableRte').checked = enableRte;
 }

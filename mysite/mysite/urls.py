@@ -16,22 +16,19 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path
-from app.views import indexView, indexView, addFileView, addDirectoryView, deleteDirectory,\
-     deleteFile, loginView, logout, resultAction, showFile, resetFile, runFramaAdv, chooseProver, setFlags, makeFiles
+from app.views import indexView, addFileView, addDirectoryView, deleteDirectory,\
+     deleteFile, loginView, logout, resultAction, showFile, runFramaAdv, makeFiles
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('index/', indexView),
-    path('index/<int:refresh>/', indexView),
+    path('index/', indexView),
     url('showFile/', showFile),
     path('addFile/', addFileView),
     path('addDirectory/', addDirectoryView),
     url('deleteDirectory/', deleteDirectory),
     url('deleteFile/', deleteFile),
-    path('resetFile/', resetFile),
-    path('runFrama/<int:id>', runFramaAdv),
-    path('chooseProver/', chooseProver),
-    path('setFlags/', setFlags),
+    path('runFrama/', runFramaAdv),
     path('login/', loginView),
     path('logout/', logout),
     url('resultAction/', resultAction),
