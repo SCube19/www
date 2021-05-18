@@ -1,23 +1,22 @@
+// consts for "xoring" ids
 const existingTabs = new Set(["PROVERS", "VCs", "RESULT"])
 const existingTabContent = new Set(["proversContent", "vcsContent", "resultContent"])
 
+//request variables
 let prover = "Default";
 let enableRte = 'off';
 let VCs = "";
 let fileId = null;
 
-let framaArr = null;
-
+// hiding/unhiding of frama output
 function framaOutputHandler(event) {
     var id = event.target.id;
     id = id[0] == 'u' ? id.slice(8, id.length) : id.slice(6, id.length);
-
-    //document.getElementById('rolled' + id).style.visibility = document.getElementById('rolled' + id).style.visibility == 'hidden' ? 'visible' : 'hidden';
-    //document.getElementById('unrolled' + id).style.visibility = document.getElementById('unrolled' + id).style.visibility == 'hidden' ? 'visible' : 'hidden';
     unroller('rolled' + id);
     unroller('unrolled' + id);
 }
 
+// helper function to animate unrolling and rolling
 function unroller(id) {
     var doc = document.getElementById(id);
     if (doc.style.visibility == 'hidden') {
@@ -31,6 +30,8 @@ function unroller(id) {
     }
 }
 
+// handles hiding/unhiding tab section and its content
+// if result then requests result string from server
 function tabsHandler(tabId, toUnhide) {
     existingTabContent.forEach(element => {
         document.getElementById(element).style.display = "none";
@@ -61,6 +62,7 @@ function tabsHandler(tabId, toUnhide) {
     }
 }
 
+// makes frama section html code from given data
 function framaParser(data) {
     var frama = "";
     if (data.framaStringList != null) {
@@ -75,21 +77,30 @@ function framaParser(data) {
     document.getElementById("frama").innerHTML = frama;
 
     var arr = Array.from(data.framaStringList);
-    framaArr = Array.from(Array(arr.length).keys());
     for (var i = 0; i < arr.length; i++) {
         document.getElementById('rolled' + i).addEventListener('click', framaOutputHandler, false);
         document.getElementById('unrolled' + i).addEventListener('click', framaOutputHandler, false);
     }
 }
 
-function codeHandler(codeId) {
-    document.getElementById("code").innerHTML = "";
-    document.getElementById("pepeimg").src = "/static/pepe.png";
-    document.getElementById("pepe").style.display = "block";
-    document.getElementById("frama").innerHTML = "";
-    fileId = null;
+// cleans html code from < and > characters
+function lineCleaner(line) {
+    outputLine = '';
+    Array.from(line).forEach(character => {
+        if (character == '<')
+            outputLine += '&#60;';
+        else if (character == '>')
+            outputLine += '&#62;';
+        else
+            outputLine += character;
+    })
+    return outputLine;
+}
 
-    if (codeId != 'pepe') {
+// handles main section, chooses between displayed images and/or requests content of file with codeId pk
+function codeHandler(codeId) {
+    menuHandler('reset')
+    if (codeId != null) {
         document.getElementById("pepeimg").src = "/static/load.gif";
         $.ajax({
             url: "/showFile/",
@@ -98,7 +109,7 @@ function codeHandler(codeId) {
             success: function(data) {
                 var code = "";
                 Array.from(data.code).forEach(line => {
-                    code += '<span style="background:var(--linenum)">' + line[1] + '  </span>  ' + line[0];
+                    code += '<span style="background:var(--linenum)">' + line[1] + '  </span>  ' + lineCleaner(line[0]);
                 });
                 document.getElementById("pepe").style.display = "none";
                 document.getElementById("code").innerHTML = code;
@@ -109,6 +120,10 @@ function codeHandler(codeId) {
     }
 }
 
+// handles menu section,
+// on delete: hides main div unhides delete div
+// on run: requests frama ouput with saved flags
+// on reset: changes main and frama section accordingly 
 function menuHandler(navName) {
     switch (navName) {
         case "delete":
@@ -129,11 +144,19 @@ function menuHandler(navName) {
                 });
             }
             break;
+        case "reset":
+            document.getElementById("code").innerHTML = "";
+            document.getElementById("pepeimg").src = "/static/pepe.png";
+            document.getElementById("pepe").style.display = "block";
+            document.getElementById("frama").innerHTML = "";
+            fileId = null;
+            break;
         default:
             break;
     }
 }
 
+// handles file tree build, makes corresponding html code
 function fileHandler(type) {
     $.ajax({
         url: "/makeFiles/",
@@ -155,6 +178,7 @@ function fileHandler(type) {
     });
 }
 
+//makes html code for file section 
 function mainFiles(data) {
     var html = "<ul>";
     Array.from(data.directories).forEach(directory => {
@@ -174,6 +198,7 @@ function mainFiles(data) {
     return html;
 }
 
+//makes html code for delete menu 
 function deleteFiles(data) {
     var html = "";
     Array.from(data.directories).forEach(directory => {
@@ -192,6 +217,7 @@ function deleteFiles(data) {
     return html;
 }
 
+//requests deletion of given file/directory
 function deleteHandler(id, type) {
     $.ajax({
         url: type == 'dir' ? "/deleteDirectory/" : "/deleteFile/",
@@ -206,6 +232,7 @@ function deleteHandler(id, type) {
     });
 }
 
+// changes flags based on form inputs
 function flagHandler() {
     prover = document.getElementById('chosenProver').value;
     enableRte = document.getElementById('enableRte').checked;
