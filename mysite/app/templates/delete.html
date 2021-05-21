@@ -1,7 +1,11 @@
 {% extends "base.html" %} {% block mainpage %}
 
 <body class="deleterGradient" style="overflow-y: auto;">
+    <div class="goback" onclick="menuHandler('back')">
+        &#60;-
+    </div>
     <div class="deleterCenter" style="text-align: left;">
+
         <h1 style="text-align: center; color:white;">CHOOSE DIRECTORY/FILE TO DELETE</h1>
         <div>
             <ul id="deleteFiles" class="deleter">

@@ -33,6 +33,7 @@ function unroller(id) {
 // handles hiding/unhiding tab section and its content
 // if result then requests result string from server
 function tabsHandler(tabId, toUnhide) {
+    //hiding
     existingTabContent.forEach(element => {
         document.getElementById(element).style.display = "none";
     });
@@ -41,10 +42,11 @@ function tabsHandler(tabId, toUnhide) {
         document.getElementById(element).className = "";
     })
 
+    //unhiding
     document.getElementById(toUnhide).style.display = "block";
     document.getElementById(tabId).className = "active";
 
-    console.log(fileId);
+    //if RESULT then ajax for frama result to put in tab content
     if (tabId == "RESULT" && fileId != null) {
         document.getElementById("actualResultContent").innerHTML = ""
         document.getElementById("loading").style.display = "block";
@@ -76,6 +78,7 @@ function framaParser(data) {
     }
     document.getElementById("frama").innerHTML = frama;
 
+    //listeners for unrolling/rolling
     var arr = Array.from(data.framaStringList);
     for (var i = 0; i < arr.length; i++) {
         document.getElementById('rolled' + i).addEventListener('click', framaOutputHandler, false);
@@ -123,7 +126,8 @@ function codeHandler(codeId) {
 // handles menu section,
 // on delete: hides main div unhides delete div
 // on run: requests frama ouput with saved flags
-// on reset: changes main and frama section accordingly 
+// on reset: changes main and frama section accordingly
+// on back: hides delete div unhides main div 
 function menuHandler(navName) {
     switch (navName) {
         case "delete":
@@ -150,6 +154,10 @@ function menuHandler(navName) {
             document.getElementById("pepe").style.display = "block";
             document.getElementById("frama").innerHTML = "";
             fileId = null;
+            break;
+        case "back":
+            document.getElementById("mainpage").style.display = "";
+            document.getElementById("delfile").style.display = "none";
             break;
         default:
             break;
@@ -178,6 +186,8 @@ function fileHandler(type) {
     });
 }
 
+//////HTML FOR FILE DISPLAY FUNCTIONS
+
 //makes html code for file section 
 function mainFiles(data) {
     var html = "<ul>";
@@ -201,6 +211,7 @@ function mainFiles(data) {
 //makes html code for delete menu 
 function deleteFiles(data) {
     var html = "";
+
     Array.from(data.directories).forEach(directory => {
         html += '<li><a style="cursor:pointer;" id="deldir_' + directory[0][0] + '" class="dir dela"><div class="leftalign"><div class="unhider">';
         for (var i = 0; i < directory[0][2]; i++)
@@ -216,6 +227,8 @@ function deleteFiles(data) {
     });
     return html;
 }
+
+/////
 
 //requests deletion of given file/directory
 function deleteHandler(id, type) {

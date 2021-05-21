@@ -402,3 +402,15 @@ input[type=submit].flags:hover {
 .framaAnimation {
     transition: all 0.4s;
 }
+
+.goback {
+    font-size: 5em;
+    color: var(--dir);
+    float: left;
+    margin-left: 5%;
+    cursor: pointer;
+}
+
+.goback:hover {
+    color: var(--delhover);
+}
